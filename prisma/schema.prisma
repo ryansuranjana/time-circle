@@ -6,10 +6,42 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../app/generated/prisma"
 }
 
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int         @id @default(autoincrement()) 
+  email     String      @unique
+  name      String
+  password  String
+  groups    GroupMember[]
+  createdAt DateTime @db.DateTime(0) @default(now()) @map("created_at")
+
+  @@map("users")
+}
+
+model Group {
+  id        String        @id @default(uuid())
+  code      String        @unique @db.VarChar(10)
+  name      String
+  members   GroupMember[]
+  createdAt DateTime @db.DateTime(0) @default(now()) @map("created_at")
+
+  @@map("groups")
+}
+
+model GroupMember {
+  id        String   @id @default(uuid())
+  userId    Int      @map("user_id")
+  groupId   String   @map("group_id")
+
+  user      User     @relation(fields: [userId], references: [id])
+  group     Group    @relation(fields: [groupId], references: [id])
+
+  @@unique([userId, groupId])
+  @@map("group_members")
 }
