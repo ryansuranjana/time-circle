@@ -15,33 +15,47 @@ datasource db {
 
 model User {
   id        Int         @id @default(autoincrement()) 
+  nickname  String      @db.VarChar(30)
   email     String      @unique
-  name      String
   password  String
-  groups    GroupMember[]
+  groups    CircleMember[]
+  schedules Schedules[]
   createdAt DateTime @db.DateTime(0) @default(now()) @map("created_at")
 
   @@map("users")
 }
 
-model Group {
-  id        String        @id @default(uuid())
-  code      String        @unique @db.VarChar(10)
-  name      String
-  members   GroupMember[]
-  createdAt DateTime @db.DateTime(0) @default(now()) @map("created_at")
+model Circle {
+  id              String        @id @default(uuid())
+  code            String        @unique @db.VarChar(10)
+  invitationCode  String        @unique @db.VarChar(10) @map("invitation_code")
+  name            String
+  members         CircleMember[]
+  createdAt       DateTime @db.DateTime(0) @default(now()) @map("created_at")
 
-  @@map("groups")
+  @@map("circles")
 }
 
-model GroupMember {
+model CircleMember {
   id        String   @id @default(uuid())
   userId    Int      @map("user_id")
-  groupId   String   @map("group_id")
+  circleId   String   @map("group_id")
 
   user      User     @relation(fields: [userId], references: [id])
-  group     Group    @relation(fields: [groupId], references: [id])
+  circle     Circle    @relation(fields: [circleId], references: [id])
 
-  @@unique([userId, groupId])
-  @@map("group_members")
+  @@unique([userId, circleId])
+  @@map("circle_members")
+}
+
+model Schedules {
+  id        String   @id @default(uuid())
+  userId    Int      @map("user_id")
+  date      DateTime @db.Date @map("date")
+  startTime DateTime @db.DateTime(0) @map("start_time")
+  endTime   DateTime @db.DateTime(0) @map("end_time")
+  createdAt DateTime @db.DateTime(0) @default(now()) @map("created_at")
+
+  user      User     @relation(fields: [userId], references: [id])
+  @@map("schedules")
 }
