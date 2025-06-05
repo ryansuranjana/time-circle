@@ -2,6 +2,10 @@
 import type { DropdownMenuItem } from "@nuxt/ui";
 import type { Circle } from "~/types";
 
+definePageMeta({
+  middleware: ["auth"],
+});
+
 const data: Circle[] = [
   {
     id: 1,
@@ -33,6 +37,8 @@ const data: Circle[] = [
   },
 ];
 
+const { user, clear: clearSession } = useUserSession();
+
 const userMenu = ref<DropdownMenuItem[]>([
   {
     label: "Profile",
@@ -42,6 +48,7 @@ const userMenu = ref<DropdownMenuItem[]>([
     label: "logout",
     icon: "i-lucide-log-out",
     onSelect: async () => {
+      await clearSession();
       await navigateTo("/login");
     },
   },
@@ -64,7 +71,7 @@ const userMenu = ref<DropdownMenuItem[]>([
             content: 'w-48',
           }"
         >
-          <UAvatar text="RY" size="md" />
+          <UAvatar :alt="user?.nickname" size="md" />
         </UDropdownMenu>
       </div>
       <div class="flex flex-row gap-x-2">

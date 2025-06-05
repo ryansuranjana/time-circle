@@ -8,6 +8,8 @@ export default defineNuxtConfig({
     "@nuxt/fonts",
     "@nuxt/icon",
     "@nuxt/image",
+    "@pinia/nuxt",
+    "nuxt-auth-utils",
   ],
 
   css: ["~/assets/css/main.css"],
@@ -19,10 +21,14 @@ export default defineNuxtConfig({
   compatibilityDate: "2024-11-27",
 
   build: {
-    transpile: ["@prisma/client"],
+    // transpile: ["@prisma/client"],
   },
 
   ui: {
     colorMode: false,
+  },
+
+  runtimeConfig: {
+    jwtSecret: process.env.JWT_SECRET || "",
   },
 });

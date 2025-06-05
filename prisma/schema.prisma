@@ -20,6 +20,7 @@ model User {
   password  String
   groups    CircleMember[]
   schedules Schedules[]
+  token     String?     @map("token")
   createdAt DateTime @db.DateTime(0) @default(now()) @map("created_at")
 
   @@map("users")
