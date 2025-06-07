@@ -35,7 +35,7 @@ const onSubmit = async (event: FormSubmitEvent<InferType<typeof schema>>) => {
       isLoading.value = false;
       if (response.status === 200) {
         await refreshSession();
-        await navigateTo("/");
+        await navigateTo("/circles");
       }
     },
   });

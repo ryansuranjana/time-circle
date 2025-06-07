@@ -27,7 +27,7 @@ model User {
 }
 
 model Circle {
-  id              String        @id @default(uuid())
+  id              Int        @id @default(autoincrement())
   code            String        @unique @db.VarChar(10)
   invitationCode  String        @unique @db.VarChar(10) @map("invitation_code")
   name            String
@@ -38,9 +38,9 @@ model Circle {
 }
 
 model CircleMember {
-  id        String   @id @default(uuid())
-  userId    Int      @map("user_id")
-  circleId   String   @map("group_id")
+  id        Int   @id @default(autoincrement())
+  userId    Int   @map("user_id")
+  circleId  Int   @map("group_id")
 
   user      User     @relation(fields: [userId], references: [id])
   circle     Circle    @relation(fields: [circleId], references: [id])
@@ -50,7 +50,7 @@ model CircleMember {
 }
 
 model Schedules {
-  id        String   @id @default(uuid())
+  id        Int      @id @default(autoincrement())
   userId    Int      @map("user_id")
   date      DateTime @db.Date @map("date")
   startTime DateTime @db.DateTime(0) @map("start_time")

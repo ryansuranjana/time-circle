@@ -6,38 +6,18 @@ definePageMeta({
   middleware: ["auth"],
 });
 
-const data: Circle[] = [
-  {
-    id: 1,
-    code: "ABHSU",
-    name: "The Last Hope",
-    members: [
-      {
-        id: 1,
-        username: "Ryan",
-        email: "ryan@gmail.com",
-      },
-      {
-        id: 2,
-        username: "Bayu",
-        email: "bayu@gmail.com",
-      },
-      {
-        id: 3,
-        username: "Eka",
-        email: "eka@gmail.com",
-      },
-    ],
-  },
-  {
-    id: 1,
-    code: "ABHSU",
-    name: "Enigma",
-    members: [],
-  },
-];
+const headers = useRequestHeaders(["cookie"]);
 
 const { user, clear: clearSession } = useUserSession();
+const [search, searchDebounce] = useDebouncedSearch("");
+
+const { data, refresh } = await useAsyncData("circles", () =>
+  $fetch<{
+    circles: Circle[];
+  }>(`/api/circles${search?.value ? `?search=${search?.value}` : ""}`, {
+    headers,
+  })
+);
 
 const userMenu = ref<DropdownMenuItem[]>([
   {
@@ -53,6 +33,13 @@ const userMenu = ref<DropdownMenuItem[]>([
     },
   },
 ]);
+
+watch(
+  () => searchDebounce?.value,
+  (val) => {
+    refresh();
+  }
+);
 </script>
 
 <template>
@@ -81,6 +68,7 @@ const userMenu = ref<DropdownMenuItem[]>([
           variant="outline"
           placeholder="Search..."
           class="w-full"
+          v-model="search"
         />
         <!-- <UButton size="md" color="primary" variant="solid">Join</UButton> -->
       </div>
@@ -88,7 +76,7 @@ const userMenu = ref<DropdownMenuItem[]>([
 
     <div class="flex flex-col gap-y-4">
       <UCard
-        v-for="circle in data"
+        v-for="circle in data?.circles"
         :key="circle.id"
         @click="() => navigateTo(`/circles/${circle.code}`)"
         class="cursor-pointer"
@@ -96,7 +84,7 @@ const userMenu = ref<DropdownMenuItem[]>([
         <p>{{ circle.name }}</p>
 
         <p class="text-sm mt-6 text-muted">
-          {{ circle.members.length }} people
+          {{ circle?.members?.length || 0 }} people
         </p>
       </UCard>
     </div>

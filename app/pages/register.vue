@@ -40,9 +40,10 @@ const onSubmit = async (event: FormSubmitEvent<InferType<typeof schema>>) => {
     async onResponse({ response }) {
       isLoading.value = false;
       if (response.status === 200) {
-        const user = response._data.user;
         await refreshSession();
-        await navigateTo("/");
+        setTimeout(async () => {
+          await navigateTo("/circles");
+        }, 500);
       }
     },
   });
