@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import AppContainer from "~/components/AppContainer.vue";
+import type { Member } from "~/types";
 
 const route = useRoute();
 
@@ -60,6 +61,31 @@ const handleCopyLink = () => {
 };
 
 console.log("params :", route.params.code);
+
+const filters = reactive({
+  year: new Date().getFullYear(),
+  month: new Date().getMonth() + 1,
+});
+
+const headers = useRequestHeaders(["cookie"]);
+const { data, refresh } = await useAsyncData(() =>
+  $fetch<{
+    members: Member[];
+    schedules: string[];
+  }>(
+    `/api/circles/${route.params.code}?year=${filters.year}&month=${filters.month}`,
+    {
+      headers,
+    }
+  )
+);
+
+watch(
+  () => [filters.year, filters.month],
+  async () => {
+    refresh();
+  }
+);
 </script>
 
 <template>
@@ -67,125 +93,17 @@ console.log("params :", route.params.code);
     <AppTitle>The Last Hope</AppTitle>
 
     <div class="mt-8 flex flex-row gap-x-2 overflow-x-scroll py-4 no-scrollbar">
-      <div class="relative">
+      <div
+        class="relative"
+        v-for="(member, index) in data?.members"
+        :key="index"
+      >
         <UAvatar
-          alt="Eka Purwadi"
+          :alt="member.nickname"
           size="3xl"
           class="mr-1"
           :ui="{
-            root: 'bg-yellow-500',
-            fallback: 'text-white',
-          }"
-        />
-        <div class="absolute -top-2 -right-1">
-          <UButton size="xs" class="rounded-full" color="error">X</UButton>
-        </div>
-      </div>
-      <div class="relative">
-        <UAvatar
-          alt="Raja"
-          size="3xl"
-          class="mr-1"
-          :ui="{
-            root: 'bg-green-500',
-            fallback: 'text-white',
-          }"
-        />
-        <div class="absolute -top-2 -right-1">
-          <UButton size="xs" class="rounded-full" color="error">X</UButton>
-        </div>
-      </div>
-      <div class="relative">
-        <UAvatar
-          alt="Yudis"
-          size="3xl"
-          class="mr-1"
-          :ui="{
-            root: 'bg-cyan-500',
-            fallback: 'text-white',
-          }"
-        />
-        <div class="absolute -top-2 -right-1">
-          <UButton size="xs" class="rounded-full" color="error">X</UButton>
-        </div>
-      </div>
-      <div class="relative">
-        <UAvatar
-          alt="Yudis"
-          size="3xl"
-          class="mr-1"
-          :ui="{
-            root: 'bg-cyan-500',
-            fallback: 'text-white',
-          }"
-        />
-        <div class="absolute -top-2 -right-1">
-          <UButton size="xs" class="rounded-full" color="error">X</UButton>
-        </div>
-      </div>
-      <div class="relative">
-        <UAvatar
-          alt="Yudis"
-          size="3xl"
-          class="mr-1"
-          :ui="{
-            root: 'bg-cyan-500',
-            fallback: 'text-white',
-          }"
-        />
-        <div class="absolute -top-2 -right-1">
-          <UButton size="xs" class="rounded-full" color="error">X</UButton>
-        </div>
-      </div>
-      <div class="relative">
-        <UAvatar
-          alt="Yudis"
-          size="3xl"
-          class="mr-1"
-          :ui="{
-            root: 'bg-cyan-500',
-            fallback: 'text-white',
-          }"
-        />
-        <div class="absolute -top-2 -right-1">
-          <UButton size="xs" class="rounded-full" color="error">X</UButton>
-        </div>
-      </div>
-      <div class="relative">
-        <UAvatar
-          alt="Yudis"
-          size="3xl"
-          class="mr-1"
-          :ui="{
-            root: 'bg-cyan-500',
-            fallback: 'text-white',
-          }"
-        />
-        <div class="absolute -top-2 -right-1">
-          <UButton size="xs" class="rounded-full" color="error">X</UButton>
-        </div>
-      </div>
-      <div class="relative">
-        <UAvatar
-          alt="Yudis"
-          size="3xl"
-          class="mr-1"
-          :ui="{
-            root: 'bg-cyan-500',
-            fallback: 'text-white',
-          }"
-        />
-        <div class="absolute -top-2 -right-1">
-          <UButton size="xs" class="rounded-full" color="error">X</UButton>
-        </div>
-      </div>
-      <div class="relative">
-        <UAvatar
-          alt="Yudis"
-          size="3xl"
-          class="mr-1"
-          :ui="{
-            root: 'bg-cyan-500',
+            root: getAvatarColor(member.id),
             fallback: 'text-white',
           }"
         />
@@ -200,14 +118,14 @@ console.log("params :", route.params.code);
         <USelect
           placeholder="Filter by year"
           :items="yearData"
-          :default-value="new Date().getFullYear()"
+          v-model="filters.year"
         />
         <USelect
           placeholder="Filter by month"
           value-key="value"
           label-key="text"
           :items="monthData"
-          :default-value="new Date().getMonth() + 1"
+          v-model="filters.month"
         />
       </div>
     </div>
@@ -215,45 +133,18 @@ console.log("params :", route.params.code);
     <div class="my-8">
       <div class="grid grid-cols-3 gap-2">
         <div
+          v-for="schedule in data?.schedules"
           class="w-full h-28 p-4 border border-gray-300 rounded-lg flex flex-col justify-between cursor-pointer"
           @click="
             () => {
               navigateTo(
-                `/circles/${route.params.code}/attendance?date=2025-05-24`
+                `/circles/${route.params.code}/attendance?date=${schedule}`
               );
             }
           "
         >
           <div class="w-full h-full flex items-center justify-center">
-            <p>24</p>
-          </div>
-        </div>
-        <div
-          class="w-full h-28 p-4 border border-gray-300 rounded-lg flex flex-col justify-between cursor-pointer"
-          @click="
-            () => {
-              navigateTo(
-                `/circles/${route.params.code}/attendance?date=2025-05-25`
-              );
-            }
-          "
-        >
-          <div class="w-full h-full flex items-center justify-center">
-            <p>25</p>
-          </div>
-        </div>
-        <div
-          class="w-full h-28 p-4 border border-gray-300 rounded-lg flex flex-col justify-between cursor-pointer"
-          @click="
-            () => {
-              navigateTo(
-                `/circles/${route.params.code}/attendance?date=2025-05-25`
-              );
-            }
-          "
-        >
-          <div class="w-full h-full flex items-center justify-center">
-            <p>30</p>
+            <p>{{ schedule?.split("-")[2] }}</p>
           </div>
         </div>
       </div>

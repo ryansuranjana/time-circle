@@ -5,6 +5,19 @@ const route = useRoute();
 
 console.log("params :", route.params.code);
 console.log("date :", route.query.date);
+
+const headers = useRequestHeaders(["cookie"]);
+const { data } = await useAsyncData(() =>
+  $fetch<{
+    data: {
+      start: string;
+      end: string;
+      users: { id: number; nickname: string }[];
+    }[];
+  }>(`/api/circles/${route.params.code}/attendance/${route.query.date}`, {
+    headers,
+  })
+);
 </script>
 
 <template>
@@ -14,88 +27,54 @@ console.log("date :", route.query.date);
       {{ moment(route.query.date as string).format("DD/MM/YYYY") }}
     </p>
 
-    <div class="flex flex-col gap-y-8">
-      <div class="flex flex-row gap-x-2">
+    <div class="flex flex-col">
+      <div
+        class="flex flex-row gap-x-2"
+        v-for="(time, index) in data?.data"
+        :key="index"
+      >
         <div class="flex flex-col gap-y-2">
-          <p>16.00</p>
-          <p>17.00</p>
-          <p>18.00</p>
-          <p>19.00</p>
-          <p>20.00</p>
-          <p>21.00</p>
+          <p>
+            {{ moment(time.start.split("T")[1], "HH:mm:ss").format("HH:mm") }}
+          </p>
+          <div
+            v-for="i in moment(time.end.split('T')[1], 'HH:mm:ss').diff(
+              moment(time.start.split('T')[1], 'HH:mm:ss'),
+              'hours'
+            )"
+            class="size-8"
+          ></div>
+          <p
+            v-if="
+              (index > 0 && time.start !== data?.data[index - 1]?.end) ||
+              index === (data?.data?.length || 0) - 1
+            "
+          >
+            {{ moment(time.end.split("T")[1], "HH:mm:ss").format("HH:mm") }}
+          </p>
         </div>
         <div class="flex flex-col justify-between flex-shrink-0 flex-grow">
           <div class="w-full h-[2px] bg-green-500 mt-3"></div>
-          <div class="pl-2">
+          <div class="pl-2 mt-2">
             <UAvatar
-              alt="Eka Purwadi"
-              size="md"
+              v-for="(user, userIndex) in time.users"
+              :key="userIndex"
+              :alt="user.nickname"
+              size="xl"
               class="mr-1"
               :ui="{
-                root: 'bg-yellow-500',
-                fallback: 'text-white',
-              }"
-            />
-            <UAvatar
-              alt="Raja"
-              size="md"
-              class="mr-1"
-              :ui="{
-                root: 'bg-green-500',
-                fallback: 'text-white',
-              }"
-            />
-            <UAvatar
-              alt="Yudis"
-              size="md"
-              class="mr-1"
-              :ui="{
-                root: 'bg-cyan-500',
+                root: getAvatarColor(user.id),
                 fallback: 'text-white',
               }"
             />
           </div>
-          <div class="w-full h-[2px] bg-green-500 mb-3"></div>
-        </div>
-      </div>
-      <div class="flex flex-row gap-x-2">
-        <div class="flex flex-col gap-y-2">
-          <p>22.00</p>
-          <p>23.00</p>
-          <p>00.00</p>
-        </div>
-        <div class="flex flex-col justify-between flex-shrink-0 flex-grow">
-          <div class="w-full h-[2px] bg-green-500 mt-3"></div>
-          <div class="pl-2">
-            <UAvatar
-              alt="Eka Purwadi"
-              size="md"
-              class="mr-1"
-              :ui="{
-                root: 'bg-yellow-500',
-                fallback: 'text-white',
-              }"
-            />
-            <UAvatar
-              alt="Raja"
-              size="md"
-              class="mr-1"
-              :ui="{
-                root: 'bg-green-500',
-                fallback: 'text-white',
-              }"
-            />
-            <UAvatar
-              alt="Yudis"
-              size="md"
-              class="mr-1"
-              :ui="{
-                root: 'bg-cyan-500',
-                fallback: 'text-white',
-              }"
-            />
-          </div>
-          <div class="w-full h-[2px] bg-green-500 mb-3"></div>
+          <div
+            class="w-full h-[2px] bg-green-500 mb-3"
+            v-if="
+              (index > 0 && time.start !== data?.data[index - 1]?.end) ||
+              index === (data?.data?.length || 0) - 1
+            "
+          ></div>
         </div>
       </div>
     </div>

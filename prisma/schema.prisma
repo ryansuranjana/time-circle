@@ -18,7 +18,7 @@ model User {
   nickname  String      @db.VarChar(30)
   email     String      @unique
   password  String
-  groups    CircleMember[]
+  circles   CircleMember[]
   schedules Schedules[]
   token     String?     @map("token")
   createdAt DateTime @db.DateTime(0) @default(now()) @map("created_at")
