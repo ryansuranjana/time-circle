@@ -89,7 +89,7 @@ watch(
 </script>
 
 <template>
-  <AppContainer>
+  <AppContainer class="relative min-h-screen">
     <AppTitle>The Last Hope</AppTitle>
 
     <div class="mt-8 flex flex-row gap-x-2 overflow-x-scroll py-4 no-scrollbar">

@@ -26,17 +26,20 @@ const filterDate = shallowRef({
 const tabs = ref<TabsItem[]>([
   {
     label: "Past",
+    value: "past",
     slot: "past" as const,
   },
   {
     label: "Incoming",
+    value: "incoming",
     slot: "incoming" as const,
   },
 ]);
+const tabsActive = ref("incoming");
 </script>
 
 <template>
-  <AppContainer>
+  <AppContainer class="relative min-h-screen">
     <AppTitle>My Schedule</AppTitle>
 
     <div class="my-6">
@@ -75,6 +78,7 @@ const tabs = ref<TabsItem[]>([
         :unmount-on-hide="true"
         :items="tabs"
         class="w-full"
+        v-model="tabsActive"
       >
         <template #past>
           <PastSchedule />
