@@ -1,14 +1,30 @@
 <script setup lang="ts">
 import moment from "moment";
 import type { Schedule } from "~/types";
+import { CalendarDate } from "@internationalized/date";
+
+const props = defineProps<{
+  filterDate: [CalendarDate, CalendarDate];
+}>();
 
 const headers = useRequestHeaders(["cookie"]);
-const { data } = await useAsyncData("incoming-schedules", () =>
+const { data, refresh } = await useAsyncData("incoming-schedules", () =>
   $fetch<{
     schedules: Schedule[];
   }>(`/api/schedules?filter=incoming&startDate=2025-06-01&endDate=2025-06-30`, {
     headers,
   })
+);
+
+watch(
+  () => props.filterDate,
+  async (newValue) => {
+    const [start, end] = newValue;
+    if (start && end) {
+      await refresh();
+    }
+  },
+  { immediate: true }
 );
 </script>
 

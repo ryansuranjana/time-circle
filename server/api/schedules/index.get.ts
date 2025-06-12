@@ -8,52 +8,35 @@ export default defineEventHandler(async (event) => {
     const endDateStr = query.endDate as string | undefined;
 
     const now = new Date();
-    const where: any = {
-      userId: user.id,
-      date: {},
-    };
 
-    // Filter berdasarkan waktu sekarang
+    const dateCondition: any = {};
+
     if (filter === "incoming") {
-      where.date.gte = now;
+      dateCondition.gte = now;
     } else if (filter === "past") {
-      where.date.lt = now;
+      dateCondition.lt = now;
     }
 
-    // Tambahkan startDate dan endDate jika ada
     if (startDateStr) {
       const startDate = new Date(startDateStr);
-      // Gunakan Math.max agar gte = yang paling besar antara now dan startDate jika filter === "incoming"
-      if (filter === "incoming") {
-        where.date.gte = new Date(Math.max(now.getTime(), startDate.getTime()));
-      } else if (filter !== "past") {
-        where.date.gte = startDate;
-      }
+      dateCondition.gte = dateCondition.gte
+        ? new Date(Math.max(dateCondition.gte.getTime(), startDate.getTime()))
+        : startDate;
     }
 
     if (endDateStr) {
       const endDate = new Date(endDateStr);
-      where.date.lte = endDate;
+      dateCondition.lte = endDate;
     }
 
-    // Bersihkan date jika kosong (tidak ada gte atau lt atau lte)
-    if (Object.keys(where.date).length === 0) {
-      delete where.date;
-    }
+    const where: any = {
+      userId: user.id,
+      ...(Object.keys(dateCondition).length > 0 ? { date: dateCondition } : {}),
+    };
 
     const schedules = await prisma.schedules.findMany({
       where,
-      orderBy: [
-        {
-          date: "asc",
-        },
-        {
-          startTime: "asc",
-        },
-        {
-          endTime: "asc",
-        },
-      ],
+      orderBy: [{ date: "asc" }, { startTime: "asc" }, { endTime: "asc" }],
     });
 
     return { schedules };

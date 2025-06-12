@@ -14,12 +14,12 @@ const filterDate = shallowRef({
   start: new CalendarDate(
     new Date().getFullYear(),
     new Date().getMonth() + 1,
-    new Date().getDate()
+    1
   ),
   end: new CalendarDate(
     new Date().getFullYear(),
     new Date().getMonth() + 1,
-    new Date().getDate()
+    new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate()
   ),
 });
 
@@ -81,10 +81,10 @@ const tabsActive = ref("incoming");
         v-model="tabsActive"
       >
         <template #past>
-          <PastSchedule />
+          <PastSchedule :filter-date="[filterDate.start, filterDate.end]" />
         </template>
         <template #incoming>
-          <IncomingSchedule />
+          <IncomingSchedule :filter-date="[filterDate.start, filterDate.end]" />
         </template>
       </UTabs>
 
