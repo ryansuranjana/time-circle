@@ -62,9 +62,19 @@ export default defineEventHandler(async (event) => {
       })
       .filter((date) => date !== "");
 
+    const circle = await prisma.circle.findUnique({
+      where: {
+        code: codeCircle,
+      },
+      select: {
+        invitationCode: true,
+      },
+    });
+
     return {
       members: members,
       schedules: circleSchedules,
+      codeInvitation: circle?.invitationCode || "",
     };
   } catch (err: any) {
     console.log();

@@ -47,19 +47,6 @@ const monthData: {
 
 const toast = useToast();
 
-const handleCopyLink = () => {
-  toast.add({
-    title: "Invitation Link Copied",
-    description: "The invitation link has been copied to your clipboard.",
-    color: "success",
-    icon: "i-heroicons-check-circle",
-  });
-
-  navigator.clipboard.writeText(
-    `${window.location.origin}/circles/${route.params.code}/invitation/dhjjshshgdgs`
-  );
-};
-
 console.log("params :", route.params.code);
 
 const filters = reactive({
@@ -72,6 +59,7 @@ const { data, refresh } = await useAsyncData(() =>
   $fetch<{
     members: Member[];
     schedules: string[];
+    codeInvitation: string;
   }>(
     `/api/circles/${route.params.code}?year=${filters.year}&month=${filters.month}`,
     {
@@ -79,6 +67,19 @@ const { data, refresh } = await useAsyncData(() =>
     }
   )
 );
+
+const handleCopyLink = (invitationCode: string) => {
+  toast.add({
+    title: "Invitation Link Copied",
+    description: "The invitation link has been copied to your clipboard.",
+    color: "success",
+    icon: "i-heroicons-check-circle",
+  });
+
+  navigator.clipboard.writeText(
+    `${window.location.origin}/circles/${route.params.code}/invitation/${invitationCode}`
+  );
+};
 
 watch(
   () => [filters.year, filters.month],
@@ -156,7 +157,7 @@ watch(
       <UButton
         icon="i-heroicons-document-duplicate"
         block
-        @click="handleCopyLink"
+        @click="() => handleCopyLink(data?.codeInvitation)"
         >Invitation Link</UButton
       >
     </div>
