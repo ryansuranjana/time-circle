@@ -45,7 +45,17 @@ const onSubmit = async (event: FormSubmitEvent<InferType<typeof schema>>) => {
 <template>
   <div class="w-full h-screen flex justify-center items-center font-inter px-4">
     <div class="md:w-[25%] w-full">
-      <h1 class="font-bold text-2xl text-center mb-14">Time Circle</h1>
+      <div class="mb-12 text-center">
+        <h1 class="font-bold text-xl mb-2">Sign In to Time Circle</h1>
+        <p class="text-sm font-light">
+          Dont have an account?
+          <span
+            class="font-bold cursor-pointer"
+            @click="() => navigateTo('/register')"
+            >Register</span
+          >
+        </p>
+      </div>
 
       <div>
         <UForm @submit="onSubmit" :schema="schema" :state="fields">

@@ -27,7 +27,10 @@ const { data } = await useAsyncData(() =>
       {{ moment(route.query.date as string).format("DD/MM/YYYY") }}
     </p>
 
-    <div class="flex flex-col">
+    <div
+      class="flex flex-col h-[75vh] p-1 overflow-y-auto"
+      style="scrollbar-width: none"
+    >
       <div
         class="flex flex-row gap-x-2"
         v-for="(time, index) in data?.data"

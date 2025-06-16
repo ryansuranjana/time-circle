@@ -43,7 +43,7 @@ watch(
 </script>
 
 <template>
-  <AppContainer class="relative min-h-screen">
+  <AppContainer class="relative h-screen">
     <div class="mb-14">
       <div class="flex justify-between mb-6">
         <AppTitle>Circle</AppTitle>
@@ -58,7 +58,7 @@ watch(
             content: 'w-48',
           }"
         >
-          <UAvatar :alt="user?.nickname" size="md" />
+          <UAvatar :alt="user?.nickname" size="md" class="cursor-pointer" />
         </UDropdownMenu>
       </div>
       <div class="flex flex-row gap-x-2">
@@ -74,7 +74,10 @@ watch(
       </div>
     </div>
 
-    <div class="flex flex-col gap-y-4">
+    <div
+      class="flex flex-col gap-y-4 h-[65vh] p-1 overflow-y-auto"
+      style="scrollbar-width: none"
+    >
       <UCard
         v-for="circle in data?.circles"
         :key="circle.id"

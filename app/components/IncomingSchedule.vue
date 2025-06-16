@@ -29,7 +29,10 @@ watch(
 </script>
 
 <template>
-  <div class="flex flex-col gap-y-4">
+  <div
+    class="flex flex-col gap-y-4 h-[70vh] overflow-y-auto"
+    style="scrollbar-width: none"
+  >
     <div
       class="p-4 border border-gray-300 w-full rounded-lg"
       v-for="schedule in data?.schedules"

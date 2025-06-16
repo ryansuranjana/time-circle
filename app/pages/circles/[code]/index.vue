@@ -132,7 +132,10 @@ watch(
     </div>
 
     <div class="my-8">
-      <div class="grid grid-cols-3 gap-2">
+      <div
+        class="grid grid-cols-3 gap-2 h-[60vh] p-1 overflow-y-auto"
+        style="scrollbar-width: none"
+      >
         <div
           v-for="schedule in data?.schedules"
           class="w-full h-28 p-4 border border-gray-300 rounded-lg flex flex-col justify-between cursor-pointer"
