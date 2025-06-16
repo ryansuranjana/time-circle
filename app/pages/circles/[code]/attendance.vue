@@ -18,6 +18,23 @@ const { data } = await useAsyncData(() =>
     headers,
   })
 );
+
+const addToGoogleCalendar = () => {
+  const startDate = moment(route.query.date as string)
+    .startOf("day")
+    .toDate();
+  const endDate = moment(route.query.date as string)
+    .endOf("day")
+    .toDate();
+  const calendarUrl = `https://calendar.google.com/calendar/r/eventedit?dates=${moment(
+    startDate
+  ).format("YYYYMMDDTHHmmss")}/${moment(endDate).format(
+    "YYYYMMDDTHHmmss"
+  )}&text=Attendance&details=Attendance%20for%20the%20circle%20on%20${moment(
+    route.query.date as string
+  ).format("DD/MM/YYYY")}`;
+  window.open(calendarUrl, "_blank");
+};
 </script>
 
 <template>
@@ -85,7 +102,9 @@ const { data } = await useAsyncData(() =>
     <div
       class="absolute bottom-0 left-0 right-0 flex justify-center items-center p-4 flex-col gap-y-2"
     >
-      <UButton block>Add to Google Calendar</UButton>
+      <UButton @click="addToGoogleCalendar" block
+        >Add to Google Calendar</UButton
+      >
     </div>
   </AppContainer>
 </template>
