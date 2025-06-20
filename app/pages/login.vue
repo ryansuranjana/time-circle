@@ -22,6 +22,7 @@ const fields = reactive({
   email: "",
   password: "",
 });
+const isUnauthenticated = ref(false);
 
 const onSubmit = async (event: FormSubmitEvent<InferType<typeof schema>>) => {
   isLoading.value = true;
@@ -36,6 +37,10 @@ const onSubmit = async (event: FormSubmitEvent<InferType<typeof schema>>) => {
       if (response.status === 200) {
         await refreshSession();
         await navigateTo("/circles");
+      }
+
+      if (response.status === 401) {
+        isUnauthenticated.value = true;
       }
     },
   });
@@ -58,6 +63,15 @@ const onSubmit = async (event: FormSubmitEvent<InferType<typeof schema>>) => {
       </div>
 
       <div>
+        <UAlert
+          v-if="isUnauthenticated"
+          title="Invalid credentials"
+          color="error"
+          icon="i-lucide:alert-triangle"
+          class="mb-4"
+          variant="soft"
+          @click="isUnauthenticated = false"
+        />
         <UForm @submit="onSubmit" :schema="schema" :state="fields">
           <UFormField label="Email" name="email" class="mb-4">
             <UInput
