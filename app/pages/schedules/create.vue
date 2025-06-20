@@ -8,6 +8,10 @@ import type { FormSubmitEvent } from "@nuxt/ui";
 import * as yup from "yup";
 import type { InferType } from "yup";
 
+definePageMeta({
+  middleware: ["auth"],
+});
+
 const df = new DateFormatter("en-US", {
   dateStyle: "medium",
 });

@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import moment from "moment";
 
+definePageMeta({
+  middleware: ["auth"],
+});
+
 const route = useRoute();
 
 console.log("params :", route.params.code);

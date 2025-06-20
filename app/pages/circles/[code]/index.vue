@@ -2,6 +2,10 @@
 import AppContainer from "~/components/AppContainer.vue";
 import type { Member } from "~/types";
 
+definePageMeta({
+  middleware: ["auth"],
+});
+
 const route = useRoute();
 
 const yearData = ref<

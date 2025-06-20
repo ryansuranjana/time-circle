@@ -1,4 +1,8 @@
 <script setup lang="ts">
+definePageMeta({
+  middleware: ["auth"],
+});
+
 const route = useRoute();
 const isProcessingJoining = ref(false);
 const toast = useToast();

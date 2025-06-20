@@ -3,6 +3,10 @@ import type { FormSubmitEvent } from "@nuxt/ui";
 import * as yup from "yup";
 import type { InferType } from "yup";
 
+definePageMeta({
+  middleware: ["auth"],
+});
+
 useHead({
   title: "Create Circle",
 });

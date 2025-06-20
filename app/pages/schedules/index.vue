@@ -6,6 +6,10 @@ import {
 } from "@internationalized/date";
 import type { TabsItem } from "@nuxt/ui";
 
+definePageMeta({
+  middleware: ["auth"],
+});
+
 const df = new DateFormatter("en-US", {
   dateStyle: "medium",
 });
