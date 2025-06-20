@@ -25,7 +25,14 @@ export default defineEventHandler(async (event) => {
     if (existingUser) {
       throw createError({
         statusCode: 409,
-        statusMessage: "Email sudah terdaftar",
+        data: {
+          errors: [
+            {
+              message: "Email sudah terdaftar",
+              field: "email",
+            },
+          ],
+        },
       });
     }
 

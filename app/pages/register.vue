@@ -30,6 +30,7 @@ const fields = reactive({
 });
 
 const isLoading = ref(false);
+const form = useTemplateRef("form");
 
 const onSubmit = async (event: FormSubmitEvent<InferType<typeof schema>>) => {
   isLoading.value = true;
@@ -44,6 +45,17 @@ const onSubmit = async (event: FormSubmitEvent<InferType<typeof schema>>) => {
         setTimeout(async () => {
           await navigateTo("/circles");
         }, 500);
+      }
+
+      if (response.status === 409) {
+        form.value?.setErrors(
+          response._data.data?.errors?.map((err: any) => {
+            return {
+              name: err.field,
+              message: err.message,
+            };
+          })
+        );
       }
     },
   });
@@ -60,13 +72,13 @@ const onSubmit = async (event: FormSubmitEvent<InferType<typeof schema>>) => {
           <span
             class="font-bold cursor-pointer"
             @click="() => navigateTo('/login')"
-            >Login</span
+            >Sign In</span
           >
         </p>
       </div>
 
       <div>
-        <UForm :schema="schema" :state="fields" @submit="onSubmit">
+        <UForm ref="form" :schema="schema" :state="fields" @submit="onSubmit">
           <UFormField label="Nickname" name="nickname" class="mb-4">
             <UInput
               placeholder="Enter nickname"

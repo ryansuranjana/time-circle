@@ -57,7 +57,7 @@ const onSubmit = async (event: FormSubmitEvent<InferType<typeof schema>>) => {
           <span
             class="font-bold cursor-pointer"
             @click="() => navigateTo('/register')"
-            >Register</span
+            >Sign Up</span
           >
         </p>
       </div>
