@@ -139,6 +139,7 @@ watch(
       <div
         class="grid grid-cols-3 gap-2 h-[60vh] p-1 overflow-y-auto"
         style="scrollbar-width: none"
+        v-if="data?.schedules.length > 0"
       >
         <div
           v-for="schedule in data?.schedules"
@@ -155,6 +156,12 @@ watch(
             <p>{{ schedule?.split("-")[2] }}</p>
           </div>
         </div>
+      </div>
+
+      <div v-else>
+        <p class="text-center text-gray-500 mt-14">
+          Dates appear only if all members are available.
+        </p>
       </div>
     </div>
 

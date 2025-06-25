@@ -10,6 +10,7 @@ const toast = useToast();
 const headers = useRequestHeaders(["cookie"]);
 const { data } = await useAsyncData(() =>
   $fetch<{
+    countMembers: number;
     isAlreadyJoined: boolean;
   }>(`/api/circles/${route.params.code}/join/${route.params.link}/check`, {
     headers: headers,
@@ -49,7 +50,7 @@ console.log("params :", route.params.code, route.params.link);
     <div class="w-full h-full flex justify-center items-center">
       <div class="text-center">
         <p class="text-3xl font-bold mb-1">The Last Hope</p>
-        <p class="mb-8">8 people</p>
+        <p class="mb-8">{{ data.countMembers }} people</p>
         <UButton
           v-if="!data?.isAlreadyJoined"
           icon="i-heroicons-user-group"

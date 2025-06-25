@@ -26,6 +26,13 @@ export default defineEventHandler(async (event) => {
         message: "Circle not found",
       });
     }
+
+    const countMembers = await prisma.circleMember.count({
+      where: {
+        circleId: circleExists.id,
+      },
+    });
+
     if (circleExists.invitationCode !== invitationCode) {
       throw createError({
         statusCode: 400,
@@ -34,6 +41,7 @@ export default defineEventHandler(async (event) => {
     }
 
     return {
+      countMembers: countMembers,
       isAlreadyJoined: circleExists.members.length > 0,
     };
   } catch (err: any) {
